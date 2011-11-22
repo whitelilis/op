@@ -1,0 +1,19 @@
+#!/bin/sh
+#set -x
+WDIR=$(dirname $0)
+check(){
+	. $WDIR/init_and_common.sh
+
+	date +%F_%T >> $(lfile)
+	##########################################
+
+	$ft "$hadoop_bin job -list " >> $(lfile)
+	msg $? >$(rfile)
+
+	#########################################
+	sleep $jobtracker_ok_sec
+	check
+}
+
+check &
+

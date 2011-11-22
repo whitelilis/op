@@ -1,0 +1,27 @@
+#!/bin/sh
+
+#set -x
+WDIR=$(dirname $0)
+check(){
+	. $WDIR/init_and_common.sh
+
+	date +%F_%T >> $(lfile)
+	##########################################
+	$ft "$hadoop_bin dfs -rm $put_location " >> $(lfile) 2>&1
+	$ft "$hadoop_bin dfs -put $put_file $put_location" >> $(lfile) 2>&1
+	ret=$?
+	if [ $ret -ne 0 ]
+	then
+		msg $ret >$(rfile)
+		check
+	fi
+	$ft "$hadoop_bin dfs -get $put_location - | md5sum | grep '2f282b84e7e608d5852449ed940bfc51'" >> $(lfile) 2>&1
+	msg $? >$(rfile)
+
+	#########################################
+	sleep $read_write_sec
+	check
+}
+
+check &
+

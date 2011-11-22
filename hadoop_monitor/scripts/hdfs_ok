@@ -1,0 +1,19 @@
+#!/bin/sh
+
+WDIR=$(dirname $0)
+check(){
+	. $WDIR/init_and_common.sh
+
+	date +%F_%T >> $(lfile)
+	##########################################
+
+	$ft "$hadoop_bin dfs -ls / 2> /dev/null | grep '/user'" >> $(lfile) 2>&1
+	msg $? >$(rfile)
+
+	#########################################
+	sleep $hdfs_ok_sec
+	check
+}
+
+check &
+
