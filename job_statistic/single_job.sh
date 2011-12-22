@@ -2,6 +2,10 @@
 
 job_id=$1
 
+history_dir="/opt/hadoop/logs/history"
+
+sleep_sec=30
+
 ddd=$(date +%F)
 cwd=$(dirname $0)
 job_daily_dir="$cwd/job_file/$ddd"
@@ -10,9 +14,12 @@ job_file="$job_daily_dir/$job_id"
 statistic_daily_dir="$cwd/job_statistic/$ddd"
 statistic_file="$statistic_daily_dir/$job_id"
 
+jobtracker_st_dir="$cwd/jobtracker_st/$ddd"
 
 sim_get(){
     job_id=$1
+    sleep $sleep_sec
+    cp $(find $history_dir -name "*$job_id*"  -not -name '*.crc') $jobtracker_st_dir 
     links -dump "http://10.100.20.2:50030/jobdetails.jsp?jobid=$job_id"
 }
 
@@ -33,9 +40,9 @@ static(){
 }
 
 main(){
-        mkdir -p $job_daily_dir $statistic_daily_dir
+        mkdir -p $job_daily_dir $statistic_daily_dir $jobtracker_st_dir
         sim_get $job_id > $job_file 2>/dev/null
         static $job_file | sed 's/,//g' > $statistic_file 2>/dev/null
 }
 
-main
+main &
