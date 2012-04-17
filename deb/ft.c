@@ -6,21 +6,28 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/wait.h>
-
+#include <errno.h>
 
 const double time_out = 20.0;
 const double STEP_TIME = 0.1;    // time step, second
 
+int status = 0;
+
 
 int main(int argc, char** argv)
 {
+        int exitno = 0;
+
         if(argc == 3){
-                ft_call(argv[2], atof(argv[1]));
+                exit(ft_call(argv[2], atof(argv[1])));
+//                printf("adf dmain got %d\n", status);
         } else if (argc == 2) {
-                ft_call(argv[1], time_out);
+                exitno = ft_call(argv[1], time_out);
+//                printf("main got %d\n", exitno);
         } else {
                 help(argv[0]);
         }
+
 }
 
 int help(char* name)
@@ -42,7 +49,6 @@ int ft_call(char *cmdstring, double timeout)
         //signal(SIGCHLD, SIG_IGN);
 
         pid_t pid;
-        int status;
         if (cmdstring == NULL)
         {
                 return 1;
@@ -53,9 +59,15 @@ int ft_call(char *cmdstring, double timeout)
         }
         else if (pid == 0)  //子进程
         {
-                execl("/bin/sh", "sh", "-c", cmdstring, (char*)0);
+                //execl("/bin/sh", "sh", "-c", cmdstring, (char*)0);
+                status = system(cmdstring);
+                int m = WEXITSTATUS(status);
+                printf("sub process got %d\n", m);
+                //kill(pid, SIGUSR1);
+                exit(m);
+
                 // ?????
-                _exit(127);
+                //_exit(127);
         }
         else
         {
@@ -64,7 +76,7 @@ int ft_call(char *cmdstring, double timeout)
 
                 while ((ret = waitpid(pid, &status, WNOHANG)) <= 0)
                 {
-                        // printf("wait %e\n", left);
+                        //        printf("wait %e\n", left);
                         usleep(STEP_TIME * 1000000); // use usleep to control
                         left -= STEP_TIME;
                         //time out
@@ -72,9 +84,10 @@ int ft_call(char *cmdstring, double timeout)
                         {
                                 status = 137;
                                 kill(pid, SIGUSR1);
-                                break;
+                                printf("last got %d\n", status);
+                                exit(status);
                         }
                 }
+
         }
-        return status;
 }

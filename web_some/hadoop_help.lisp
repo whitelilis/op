@@ -4,6 +4,7 @@
 (require 'cl-fad)
 (require :html-template)
 (require :elephant)
+(require :hadoop_monitor)
 (use-package :elephant)
 
 
@@ -48,7 +49,7 @@
   ;; make a folder dispatcher the last item of the dispatch table
   ;; if a request doesn't match anything else, try it from the filesystem
   (setf (alexandria:last-elt hunchentoot:*dispatch-table*)
-        (hunchentoot:create-folder-dispatcher-and-handler "/" (truename "www")))
+        (hunchentoot:create-folder-dispatcher-and-handler "/" (truename "/home/wizard/pro/lisp/www")))
   (hunchentoot:start *acceptor*))
 
 
