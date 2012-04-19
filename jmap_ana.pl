@@ -2,7 +2,7 @@
 
 
 # anaylyze mulity jmap -histo result, to detect which object's memory grow much
-# # useage : cat jmap_file1 jmapfile2 ... | ./map_serios.pl
+# # useage : cat jmap_file1 jmapfile2 ... | ./jmap_ana.pl
 #
 use strict;
 use warnings;
@@ -18,10 +18,19 @@ my $topNum = 6;
 my %h = ();
 
 my %opts = ();
-getopts('tn:', \%opts);
+getopts('htn:m:', \%opts);
 
-warn Dumper(\%opts);
+#warn Dumper(\%opts);
 
+
+sub help{
+        print "anaylyze mulity jmap -histo result, to detect which object's memory grow much\n";
+        print "useage : cat jmap_file1 jmapfile2 ... | ./jmap_ana.pl\n";
+        print "options : -h  for this help\n";
+        print "          -t  for analyze Total, default not\n";
+        print "          -n <name> for output filename, default jmap.gif\n";
+        exit 0;
+}
 
 
 sub singleFt{
@@ -123,6 +132,7 @@ sub sim_draw{
         }
 }
 
+help if $opts{h};
 
 
 while (<>){
