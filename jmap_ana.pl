@@ -10,13 +10,17 @@ use warnings;
 use Data::Dumper;
 use Statistics::LineFit;
 use GD::Graph::lines;
+use Getopt::Std;
 
 
 my $recordFile = "jmap_test.r";
 my $topNum = 6;
 my %h = ();
 
+my %opts = ();
+getopts('tn:', \%opts);
 
+warn Dumper(\%opts);
 
 
 
@@ -124,7 +128,11 @@ sub sim_draw{
 while (<>){
         chomp;
         my ($no, $count, $byte, $type) = split;
-        next unless $no && $no =~ /\d+:/;
+        next unless $no && ($no =~ /\d+:/ or $no =~ /Total/);
+        $type = 'Total' if $no =~ /Total/;
+
+        next if $no =~ /Total/ && ! $opts{t};
+
         if (! $h{$type}){
                 my @tmp = ();
                 $h{$type} = \@tmp;
@@ -161,7 +169,10 @@ for ( @sks ) {
         push @draw_data, $h{$_};
 }
 
-sim_draw \@draw_data, \@sks, "jmap.gif";
+$opts{n} = 'jmap.gif' unless $opts{n};
+
+
+sim_draw \@draw_data, \@sks, $opts{n};
 
 
 
