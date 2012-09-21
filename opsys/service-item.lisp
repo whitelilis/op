@@ -1,3 +1,8 @@
+(require :cl-ppcre)
+(require :alexandria)
+(require :hunchentoot)
+(require :trivial-http)
+
 (defparameter *service-path-delimiter* "-")
 (defparameter *service-monitor-delimiter* "/")
 
@@ -124,17 +129,24 @@
 
 ;;;;;;;;;;;;;     monitor         ;;;;;;;;;;;;;;;;;
 
-(deftype monitor-state () '(OK ERROR WARN TIMEOUT))
 
 
 (defstruct monitor-item
   (history (make-queue 100))
+  (last-three (make-queue 3))
   (timeout 1200)
+  context ; hash to store something, some rules or other maybe use it
   name
   service
   care
   frozen
   (lock (ccl:make-lock)))
+
+
+(defun append-monitor-data (data monitor-item)
+  (with-lock-grabbed ((monitor-item-lock monitor-item))
+    (enqueue data (monitor-item-history monitor-item))
+    (enqueue data (monitor-item-last-three monitor-item))))
 
 
 (defun monitor-data-from-alist (alist)
@@ -153,24 +165,63 @@
 (defun add-monitor-data (service-tree service-name monitor-name monitor-data-alist)
   (let ((monitor (monitor-from-str service-tree service-name monitor-name))
         (monitor-data (monitor-data-from-alist monitor-data-alist)))
-    (enqueue monitor-data (monitor-item-history monitor))))
+    (append-monitor-data monitor-data monitor)))
 
 
 
 
-;;;;;;;;;;;;      actions      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun msg-send (mobile-number message)
-  (let ((uri (format nil "http://192.168.10.25/database.php?phoneno=~A&content=~A" mobile-number (hunchentoot:url-encode message))))
-    (trivial-http:http-get uri)))
 
 ;;;;;;;;;;;;      rules        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defstruct rule
+  judge-func    ; monitor-item is the only argument
+  action-func   ; monitor-item is the only argument
+  )
+
+
+;;;;;;;;;;;;;;;;;;;;  judge-func  ;;;;;;;;;;;;;;;;;;;;
+
+(deftype monitor-state () '(:OK :ERROR :WARN :TIMEOUT))
+
+
+(defun judge-ok-to-nok (monitor-item)
+  (let ((last-three-reverse (mapcar #'(lambda (x) (gethash :status x))
+                                    (reverse (messages (monitor-item-last-three monitor-item))))))
+    (or
+     (and (= 1 (length last-three-reverse)) (not (equalp :OK (car last-three-reverse )))) ; only one not ok
+     (and (< 1 (length last-three-reverse)) (not (equalp :OK (car last-three-reverse ))) (equalp :OK (cadr last-three-reverse))))))
+
+
+(defun judeg-nok-to-ok (monitor-item)
+  (let ((last-three-reverse (mapcar #'(lambda (x) (gethash :status x))
+                                    (reverse (messages (monitor-item-last-three monitor-item))))))
+    (or
+     (and (= 1 (length last-three-reverse)) (not (equalp :OK (car last-three-reverse )))) ; only one not ok
+     (and (< 1 (length last-three-reverse)) (not (equalp :OK (car last-three-reverse ))) (equalp :OK (cadr last-three-reverse))))))
+
+  )
+
+
+
+;;;;;;;;;;;;      action-func      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defstruct person
   name
   mobile
   email)
 
-(defstruct holder-group
-  people)
+(defstruct holder
+  main
+  others
+  )
+
+(defun msg-send (mobile-number message)
+  (let ((uri (format nil "http://192.168.10.25/database.php?phoneno=~A&content=~A" mobile-number (hunchentoot:url-encode message))))
+    (trivial-http:http-get uri)))
+
+;;; cold-reset
+
+;;;;;;;;;;;;;;;;;;;;  judge-func  ;;;;;;;;;;;;;;;;;;;;
+
 
 
