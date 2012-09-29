@@ -21,14 +21,16 @@ sub gen_single{
 
 
 ##################### main ######################
-open KK, "tail --follow=name $monitoer_file |";
 
-while (<KK>) {
+open STDIN, "tail --follow=name $monitoer_file |";
+
+
+while (<STDIN>) {
         chomp;
         if (/(job[0-9_]+)\s*has completed successfully/  || /Killing job '(job[0-9_]+)'/ ) {
-                my $job = $1;
                 #print "$job\n";
-		my $t = threads->new(\&gen_single, $job);
+		my $t = threads->new(\&gen_single, $1);
+		$t->detach;
 		$t->yield;
         }
 }
