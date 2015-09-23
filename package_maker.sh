@@ -8,7 +8,7 @@ aim_sh='install.sh'
 function mkpackage(){
     pid=$$
     target_dir=$1
-    felow_install_shell_command_file=$2
+    follow_install_shell_command_file=$2
 
     base64_file=._base64_$pid
 
@@ -24,8 +24,8 @@ function mkpackage(){
     echo 'printf $test_base64|base64 -d >._temp.tar.gz;'>>$aim_sh
     echo 'tar zxf ._temp.tar.gz' >> $aim_sh
     echo 'rm ._temp.tar.gz' >>$aim_sh
-    if [[ -e $fellow_install_shell_command_file ]]; then
-        cat $fellow_install_shell_command_file >>$aim_sh
+    if [[ -e $follow_install_shell_command_file ]]; then
+        cat $follow_install_shell_command_file >>$aim_sh
     fi
     chmod +x $aim_sh
 }
