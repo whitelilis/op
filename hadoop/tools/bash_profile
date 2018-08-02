@@ -1,0 +1,36 @@
+datanodes_file=/etc/hadoop/conf/dns
+block_corrupt_file=/tmp/b1
+block_result_file=/tmp/b1_result
+find_file_python=/etc/hadoop/conf/f.py
+find_file_bash=/etc/hadoop/conf/fb.sh
+
+
+
+function block_find_rest(){
+    pssh -i  -h $datanodes_file "ps aux | grep $find_file_python" | grep -c b1
+}
+
+function block_find_init(){
+    for f in $find_file_python $find_file_bash $block_corrupt_file
+    do
+        pscp -h $datanodes_file $find_file_python $find_file_python
+    done
+}
+
+function block_find_start(){
+   pssh -h $datanodes_file "bash $find_file_bash"
+}
+
+function block_find_result(){
+    work_dir=/tmp/bfrr
+    rm -rf $work_dir
+    mkdir -p $work_dir
+    pushd $work_dir
+    pssh -o $work_dir -h $datanodes_file "cat $block_result_file"
+    grep 'find block' $work_dir/*
+    popd
+}
+
+
+#########################
+export HISTTIMEFORMAT="%F %T `whoami` "
