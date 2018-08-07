@@ -17,7 +17,7 @@ tsdb_uri = 'http://10.10.2.61:8484'
 host_str = sys.argv[1]
 
 
-cpu_disk_url = tsdb_uri + '/#start=' + start_str + '&m=p90:cpu.usr%7Bhost=' + host_str + '%7D&o=axis%20x1y2&m=p90:cpu.sys%7Bhost=' + host_str + '%7D&o=axis%20x1y2&m=p90:iostat.disk.util%7Bhost=' + host_str + '%7D&o=&yrange=%5B0:%5D&y2range=%5B0:%5D&key=out%20center%20top%20box&wxh=1260x580&style=linespoint&autoreload=15'
+cpu_disk_url = tsdb_uri + '/#start=' + start_str + '&m=p90:cpu.usr%7Bhost=' + host_str + '%7D&o=&m=p90:cpu.sys%7Bhost=' + host_str + '%7D&o=&m=p90:iostat.disk.util%7Bhost=' + host_str + '%7D&o=&yrange=%5B0:%5D&y2range=%5B0:%5D&key=out%20center%20top%20box&wxh=1260x580&style=linespoint&autoreload=15'
 
 
 
