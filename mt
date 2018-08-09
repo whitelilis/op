@@ -21,7 +21,7 @@ cpu_disk_url = tsdb_uri + '/#start=' + start_str + '&m=p90:cpu.usr%7Bhost=' + ho
 
 
 
-mem_net_url = tsdb_uri + '/#start=' + start_str + '&m=sum:proc.meminfo.anonpages%7Bhost=' + host_str + '%7D&o=axis%20x1y2&m=sum:proc.meminfo.memtotal%7Bhost=' + host_str + '%7D&o=axis%20x1y2&m=sum:rate:proc.net.bytes%7Bdirection=*,host=' + host_str + ',iface=em1%7D&o=&yrange=%5B0:%5D&y2range=%5B0:%5D&key=out%20center%20top%20box&wxh=1260x580&style=linespoint&autoreload=15'
+mem_net_url = tsdb_uri + '/#start=' + start_str + '&m=sum:proc.meminfo.anonpages%7Bhost=' + host_str + '%7D&o=axis%20x1y2&m=sum:proc.meminfo.memtotal%7Bhost=' + host_str + '%7D&o=axis%20x1y2&m=sum:rate:proc.net.bytes%7Bdirection=*,host=' + host_str + ',iface=*%7D&o=&yrange=%5B0:%5D&y2range=%5B0:%5D&key=out%20center%20top%20box&wxh=1260x580&style=linespoint&yformat=%2525.2b%20%2525B&y2format=%2525.2b%20%2525B&autoreload=15'
 
 
 
