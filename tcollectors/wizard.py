@@ -69,9 +69,9 @@ def cpu_values():
         for line in fd:
             cpu_line2 = line
             break
-    s1 = (user1, nice, system1, idle, iowait1, irq, softirq, stealstolen, guest) = cpu_line1.split()[1:]
+    s1 = (user1, nice, system1, idle, iowait1, irq, softirq, stealstolen, guest) = cpu_line1.split()[1:10] # contos7 get one more than centos6
     sum1 = sum(map(int, s1))
-    s2 = (user2, nice, system2, idle, iowait2, irq, softirq, stealstolen, guest) = cpu_line2.split()[1:]
+    s2 = (user2, nice, system2, idle, iowait2, irq, softirq, stealstolen, guest) = cpu_line2.split()[1:10]
     sum2 = sum(map(int, s2))
 
     total = sum2 - sum1
