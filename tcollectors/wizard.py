@@ -17,11 +17,17 @@ ts = int(time.time())
 def report_one(catalog, name, value, tags = ''):
     print 'wizard.sys.%s.%s %d %f host=%s %s' % (catalog, name, ts, value, hostname, tags)
 
-def singleFileValue(file):
+def single_file_value(file):
     with open(file) as fd:
         for line in fd:
             # only the first line
             return line.strip()
+
+def filter_net_speed_value(value_str):
+    if value_str == '-1' or value_str == '4294967295':
+        raise Exception('net unknown value')
+    else:
+        return value_str
 
 def net_values():
     net_file = '/proc/net/dev'
@@ -38,7 +44,7 @@ def net_values():
 
     for d in old_dict.keys():
         try:
-            report_one('net', 'speed_MB', int(singleFileValue('/sys/class/net/%s/speed' % d)), 'dev=%s' % d) 
+            report_one('net', 'speed_MB', int(filter_net_speed_value(single_file_value('/sys/class/net/%s/speed' % d))), 'dev=%s' % d) 
         except:
             pass
 
