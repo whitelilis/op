@@ -1,0 +1,203 @@
+#!/bin/bash
+cwd=$(dirname $0)
+cd  $cwd
+
+source /etc/profile
+
+ok_flag=0
+
+min_limit_g=3
+max_df_pec=95
+
+log_path=/tmp/checker_$(date +%s)
+
+function rt_check(){
+    rt=$?
+    check_item=$1
+    if [ $rt -ne 0 ]
+    then
+        ok_flag=1
+        echo ERROR "$check_item"
+        echo ERROR "$check_item" >> log_path
+    fi
+}
+
+# os version
+uname -r 2>&1 | grep '2.6.32-.*.el6.x86_64' > /dev/null 2>&1
+rt_check 'os version'
+
+# sys conf
+#[ $(/sbin/sysctl -n net.ipv4.tcp_tw_reuse) -eq 1 ]
+#rt_check 'net.ipv4.tcp_tw_reuse'
+
+[ $(/sbin/sysctl -n net.ipv4.tcp_tw_recycle) -eq 1 ]
+rt_check 'net.ipv4.tcp_tw_recycle'
+
+
+# net connection
+con_count=$(ss -s | sed -n -e '2p' | awk '{print $2}')
+[ $con_count -lt 35000 ]
+rt_check "net connection too many $con_count"
+
+# java version
+#(java -version 2>&1 | grep 1.7.0_67-b01) > /dev/null 2>&1
+#rt_check 'java version'
+
+# hadoop version
+#(hadoop version | grep '98e07176d1787150a6a9c087627562c') > /dev/null 2>&1
+#rt_check 'hadoop version'
+
+# ulimit
+ulimit_exp_count=320000
+ulimit_open_file=$(ulimit -a | grep "open files" | awk '{print $NF}')
+#[ $ulimit_open_file -ge $ulimit_exp_count ]
+#rt_check 'open files'
+
+# libs
+[ -e /usr/lib64/liblzo2.so ]
+rt_check 'liblzo'
+
+[ -e /usr/lib/hadoop/lib/native/Linux-amd64-64/libgplcompression.so ]
+rt_check 'libgplcompression.so'
+
+grep com.hadoop.compression.lzo.LzoCodec /usr/lib/hadoop/lib/*.jar > /dev/null 2>&1
+rt_check 'lzo jar'
+
+
+# python version
+python -V 2>&1 | grep 2.6.6 > /dev/null 2>&1
+rt_check 'python version'
+
+# mem
+#free -g | sed -n 2p | awk '{print $2}' | egrep '62|31|47' > /dev/null 2>&1
+#rt_check 'mem size'
+# net speed, need root
+# (ethtool $(/sbin/ifconfig | grep Ethernet | awk '{print $1}' | egrep 'eth|em' | head -1) | sed -n 12p | grep '1000Mb/s') > /dev/null 2>&1
+# rt_check 'net speed'
+
+# huge page
+
+grep '\[never\]' /sys/kernel/mm/redhat_transparent_hugepage/enabled > /dev/null 2>&1
+rt_check 'kernel hugepage enable'
+
+grep '\[never\]' /sys/kernel/mm/redhat_transparent_hugepage/defrag > /dev/null 2>&1
+rt_check 'kernel hugepage defrag'
+
+grep '1' /proc/sys/vm/overcommit_memory > /dev/null 2>&1
+rt_check 'overcommit'
+
+# iptables empty, need root
+# iptables -L | md5sum | grep 'f2384cfbed4d4fb64061368c4128d7ea' > /dev/null 2>&1
+# rt_check 'iptables'
+
+# swap turn off
+free | tail -1 | md5sum | grep 'e96dbb554b0e7844a8e1043edeef6614' > /dev/null 2>&1
+rt_check 'swap on'
+
+# dir owner, mod
+
+# boost
+[ -e /usr/lib64/libboost_iostreams-mt.so ]
+rt_check 'boost-devel'
+
+# boost-python
+[ -e /usr/lib64/libboost_python.so ]
+rt_check 'boost-python'
+
+# spark-lib
+[ -e /usr/lib/hadoop-yarn/lib/spark-adh2.4.1-yarn-shuffle.jar ]
+rt_check '/usr/lib/hadoop-yarn/lib/spark-adh2.4.1-yarn-shuffle.jar'
+
+# datanode running
+ps aux | grep -v grep | grep datanode > /dev/null 2>&1
+[ $? -eq 0 ]
+rt_check 'datanode running'
+
+# datanode running mem
+running_datanode_mem_line=$(for f in $(ps aux | grep datanode); do echo $f | grep Xmx; done | tail -1)
+echo $running_datanode_mem_line | grep 'm$' > /dev/null 2>&1
+if [ $? -eq 0 ] # set as XmxKKKm
+then
+    running_datanode_mem=$(echo $running_datanode_mem_line | sed 's/[-Xmx]//g')
+    [ $running_datanode_mem -gt 4500 ]
+    rt_check "datanode mem $running_datanode_mem_line"
+else  # set as XmxKKKg
+    running_datanode_mem=$(echo $running_datanode_mem_line | sed 's/[-Xmxg]//g')
+    [ $running_datanode_mem -ge 4 ]
+    rt_check "datanode mem $running_datanode_mem_line"
+fi
+
+current_free_g=$(free -g | sed -n '3p' | awk '{print $4}')
+
+[ $current_free_g -ge $min_limit_g ]
+rt_check "mem: $current_free_g < $min_limit_g"
+
+current_df_max=$(df -h | egrep 'data|/$' | awk '{print $5}' | sed -e 's/%//' | sort -n | tail -1)
+
+[ $current_df_max -le $max_df_pec ]
+rt_check "df: $current_df_max% > $max_df_pec%"
+
+
+# domain name
+for host in 1.master.adh 1.slave.adh 15.slave.adh 75.slave.adh hbase01 hbase08 hbase20 hbase30
+do
+    ping -c 1 -W 10 $host > /dev/null 2>&1
+    #rt_check "ping : $host"
+    #(date +%F_%T ; strace ping -c 1 -W 5 $host) > /tmp/_log_ 2>&1
+    #if [ $? -ne 0 ]
+    #then
+    #    cat /tmp/_log_ >> /tmp/ping_error
+    #fi
+done
+
+# disk dir check
+for data_directory in $(ls / -1 | grep "^data.*[0-9]$")
+do
+   is_ok=0
+   is_mount=$(mount |awk '{print $3}'| grep -w $data_directory)
+   if [ x = "x$is_mount" ]
+   then
+      file_num=$(ls /$data_directory | wc -l)
+      if [ $file_num -ge 1 ]
+      then
+         is_ok=1
+      fi
+   fi
+   [ $is_ok -eq 0 ]
+   rt_check "$data_directory mount check "
+done
+
+# dir owner check
+for f in $(seq 1 12)
+do
+	str_line=$(ls -ld /data$f/data 2>/dev/null)
+	if [ $? -eq 0 ]
+	then
+		right=$(echo $str_line | awk '{print $1}')
+		owner=$(echo $str_line | awk '{print $3}')
+		[[ $right == drwx* ]] && [ $owner == 'hdfs' ]
+		rt_check "dir right check /data$f/data"
+	fi
+	str_line=$(ls -ld /data$f/yarn 2>/dev/null)
+	if [ $? -eq 0 ]
+	then
+		right=$(echo $str_line | awk '{print $1}')
+		owner=$(echo $str_line | awk '{print $3}')
+		[[ $right == drwx* ]] && [ $owner == 'yarn' ]
+		rt_check "dir right check /data$f/yarn"
+	fi
+done
+
+# disk check
+check_script=/etc/hadoop/conf/disk_check.pl
+[ -e $check_script ]
+rt_check 'no distcheck script'
+
+$check_script
+rt_check 'has_diskerror'
+
+##############################  result, output #########################################
+if [ $ok_flag -eq 0 ]
+then
+    echo OK
+fi

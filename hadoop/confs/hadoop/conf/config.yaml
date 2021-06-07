@@ -1,0 +1,178 @@
+hdfs-site.xml:
+    dfs.nameservices: adhnamenode
+    dfs.ha.namenodes.adhnamenode: mainNN,backNN
+    dfs.namenode.support.allow.format: "false"
+    dfs.namenode.http-address.adhnamenode.mainNN: mainNN.master.adh:8070
+    dfs.namenode.rpc-address.adhnamenode.mainNN: mainNN.master.adh:8020
+    dfs.namenode.rpc-bind-host.adhnamenode.mainNN: 0.0.0.0
+    dfs.namenode.http-bind-host.adhnamenode.mainNN: 0.0.0.0
+    dfs.namenode.servicerpc-bind-host.adhnamenode.mainNN: 0.0.0.0
+
+    dfs.namenode.http-address.adhnamenode.backNN: backNN.master.adh:8070
+    dfs.namenode.rpc-address.adhnamenode.backNN: backNN.master.adh:8020
+    dfs.namenode.rpc-bind-host.adhnamenode.backNN: 0.0.0.0
+    dfs.namenode.http-bind-host.adhnamenode.backNN: 0.0.0.0
+    dfs.namenode.servicerpc-bind-host.adhnamenode.backNN: 0.0.0.0
+
+    dfs.client.failover.proxy.provider.adhnamenode: org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider
+    dfs.ha.automatic-failover.enabled: "true"
+    dfs.ha.fencing.methods: sshfence(hdfs:22)
+    dfs.ha.fencing.ssh.private-key-files: /var/lib/hadoop-hdfs/.ssh/id_rsa
+    dfs.ha.zkfc.nn.http.timeout.ms: 0 # If it is set to zero, DFS ZKFC won't get local NN thread dump
+    dfs.ha.fencing.ssh.connect-timeout: 30000
+    dfs.namenode.shared.edits.dir: qjournal://4.slave.adh:8485;5.slave.adh:8485;6.slave.adh:8485;7.slave.adh:8485;8.slave.adh:8485/adhnamenode
+    dfs.journalnode.edits.dir: /data/journal
+    dfs.block.size: 268435456
+    dfs.datanode.sync.behind.writes: "true"
+    dfs.datanode.drop.cache.behind.reads: "true"
+    dfs.datanode.drop.cache.behind.writes: "true"
+    dfs.datanode.balance.max.concurrent.moves: 24
+    dfs.namenode.name.dir: /data1/hdfs/dfs/name
+    dfs.datanode.data.dir: /data1/data,/data2/data,/data3/data,/data4/data,/data5/data,/data6/data,/data7/data,/data8/data,/data9/data,/data10/data,/data11/data,/data12/data
+    dfs.balance.bandwidthPerSec: 10485760
+    dfs.datanode.socket.write.timeout: 1000000
+    dfs.datanode.max.transfer.threads: 12288
+    dfs.client.read.shortcircuit: "false"
+    dfs.client.file-block-storage-locations.timeout.millis: 10000
+    dfs.domain.socket.path: /var/run/hadoop-hdfs/dn._PORT
+    dfs.datanode.hdfs-blocks-metadata.enabled: "true"
+    dfs.replication: 3
+    dfs.permissions.enabled: "true"
+    dfs.permissions.superusergroup: root
+    dfs.datanode.failed.volumes.tolerated: 3
+    dfs.webhdfs.enabled: "false"
+    dfs.hosts: /etc/hadoop/conf/dns
+    dfs.hosts.exclude: /etc/hadoop/conf/exclude-dns
+    dfs.datanode.directoryscan.interval: 3600
+    dfs.datanode.directoryscan.threads: 10
+    dfs.namenode.handler.count: 1024 #之前为1024 设置该值的一般原则是将其设置为集群大小的自然对数乘以20，即20logN，N为集群大小
+    dfs.datanode.du.reserved: 21474836480 #default 0
+    dfs.namenode.checkpoint.txns: 4000000
+    dfs.image.transfer.bandwidthPerSec: 52428800
+    dfs.blockreport.intervalMsec: 7200000
+    dfs.client.hedged.read.threadpool.size: 4
+    dfs.client.hedged.read.threshold.millis: 5000
+    dfs.block.scanner.volumn.bytes.per.second: 10485760
+    dfs.datanode.max.transfer.threads: 4096
+    dfs.datanode.handler.count: 16
+    dfs.client.file-block-storage-locations.num-threads: 8
+    dfs.hosts.exclude: /etc/hadoop/conf/excludes
+    dfs.client.socket-timeout: 20000
+    dfs.blockreport.intervalMsec: 1200000
+    dfs.blockreport.initialDelay: 0
+    dfs.namenode.replication.work.multiplier.per.iteration: 20
+
+core-site.xml:
+    ha.zookeeper.session-timeout.ms: 10000
+    ha.failover-controller.graceful-fence.connection.retries: 2
+    fs.defaultFS: hdfs://adhnamenode#final
+    ha.zookeeper.quorum: 4.slave.adh:2181,5.slave.adh:2181,6.slave.adh:2181,7.slave.adh:2181,8.slave.adh:2181
+    hadoop.tmp.dir: /data/hadooptmp
+    io.file.buffer.size: 65536
+    fs.trash.interval: 2880
+    hadoop.logfile.size: 10000000
+    hadoop.logfile.count: 10
+    io.compression.codecs: org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec,org.apache.hadoop.io.compress.SnappyCodec
+    io.compression.codec.lzo.class: com.hadoop.compression.lzo.LzoCodec
+    hadoop.proxyuser.mapred.hosts: "*"
+    hadoop.proxyuser.mapred.groups: "*"
+    hadoop.proxyuser.yarn.hosts: "*"
+    hadoop.proxyuser.yarn.groups: "*"
+    hadoop.proxyuser.hue.hosts: "10.10.10.178"
+    hadoop.proxyuser.hue.groups: "*"
+    hadoop.proxyuser.oozie.hosts: "10.10.10.178,10.10.10.39"
+    hadoop.proxyuser.oozie.groups: "*"
+    hadoop.proxyuser.httpfs.hosts: "10.10.10.178"
+    hadoop.proxyuser.httpfs.groups: "*"
+    topology.script.file.name: /etc/hadoop/conf/rackware
+    ipc.server.listen.queue.size: 8192
+    ha.health-monitor.rpc-timeout.ms: 120000
+    ha.failover-controller.new-active.rpc-timeout.ms: 180000
+
+
+yarn-site.xml:
+    yarn.log-aggregation-enable: "true"
+    yarn.log-aggregation.retain-seconds: 604800
+    yarn.application.classpath: /etc/hadoop/conf,/usr/lib/hadoop/*,/usr/lib/hadoop/lib/*,/usr/lib/hadoop-hdfs/*,/usr/lib/hadoop-hdfs/lib/*,/usr/lib/hadoop-mapreduce/*,/usr/lib/hadoop-mapreduce/lib/*,/usr/lib/hadoop-yarn/*,/usr/lib/hadoop-yarn/lib/*
+    yarn.resourcemanager.address: mainRM.master.adh:8032#final
+    yarn.resourcemanager.scheduler.address: mainRM.master.adh:8030#final
+    yarn.resourcemanager.resource-tracker.address: mainRM.master.adh:8031#final
+    yarn.resourcemanager.admin.address: mainRM.master.adh:8033#final
+    yarn.resourcemanager.hostname: mainRM.master.adh#final
+    yarn.resourcemanager.webapp.address: mainRM.master.adh:8088#final
+    yarn.resourcemanager.nodes.include-path: /etc/hadoop/conf/nms
+    yarn.resourcemanager.nodes.exclude-path: /etc/hadoop/conf/exclude-nms
+
+    yarn.scheduler.fair.preemption: "true"
+    yarn.scheduler.fair.assignmultiple: "true"
+    yarn.scheduler.fair.max.assign: 4
+    yarn.scheduler.minimum-allocation-mb: 256
+    yarn.scheduler.increment-allocation-mb: 256
+    yarn.scheduler.maximum-allocation-mb: 16384
+    yarn.client.nodemanager-connect.max-wait-ms: 100000
+    yarn.nodemanager.local-dirs: /data1/yarn,/data2/yarn,/data3/yarn,/data4/yarn,/data5/yarn,/data6/yarn,/data7/yarn,/data8/yarn,/data9/yarn,/data10/yarn,/data11/yarn,/data12/yarn
+    yarn.nodemanager.aux-services: mapreduce_shuffle,spark_shuffle
+    yarn.nodemanager.aux-services.mapreduce_shuffle.class: org.apache.hadoop.mapred.ShuffleHandler
+    yarn.nodemanager.aux-services.spark_shuffle.class: org.apache.spark.network.yarn.YarnShuffleService
+    yarn.nodemanager.log-dirs: ${yarn.nodemanager.local-dirs}
+    yarn.nodemanager.remote-app-log-dir: /var/log/hadoop-yarn/apps
+    yarn.nodemanager.pmem-check-enabled: "true"
+    yarn.nodemanager.health-checker.interval-ms: 300000
+    yarn.nodemanager.health-checker.script.timeout-ms: 600000
+    yarn.nodemanager.health-checker.script.path: /etc/hadoop/conf/healthChecker
+    yarn.nodemanager.delete.debug-delay-sec: 1800
+    yarn.nodemanager.resource.detect-hardware-capabilities: "true"
+    yarn.nodemanager.resource.memory-mb: -1
+    #yarn.nodemanager.resource.system-reserved-memory-mb: 10240
+    yarn.nodemanager.resource.cpu-vcores: 80
+    yarn.resourcemanager.admin.client.thread-count: 10
+    yarn.resourcemanager.am.max-attempts: 3
+    yarn.resourcemanager.proxy-user-privileges.enabled: "true"
+    yarn.nodemanager.resource.system-reserved-memory-mb: 14336
+
+    #timeline service
+    yarn.timeline-service.enabled: "true"
+    yarn.resourcemanager.system-metrics-publisher.enabled: "false"
+    yarn.timeline-service.generic-application-history.enabled: "true"
+    yarn.timeline-service.http-cross-origin.enabled: "true"
+    yarn.timeline-service.hostname: mainRM.master.adh
+    
+    #application master
+    yarn.app.mapreduce.am.resource.mb: 2500
+    yarn.app.mapreduce.am.staging-dir: /var/log/hadoop-yarn/staging
+    yarn.app.mapreduce.am.log.level: WARN
+    yarn.app.mapreduce.am.job.task.listener.thread-count: 60
+    yarn.app.mapreduce.am.command-opts: -server -Xmx2g -Xms2g -Xmn512m -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=10 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=0 -XX:+CMSClassUnloadingEnabled -XX:-CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=70 -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+UseFastAccessorMethods
+
+
+mapred-site.xml:
+    mapreduce.task.timeout: 300000
+    mapreduce.jobtracker.expire.trackers.interval: 300000
+    mapreduce.job.jvm.numtasks: 1
+    mapreduce.jobtracker.handler.count: 20  # 4% of the number of tasktracker nodes
+    mapreduce.task.io.sort.factor: 100
+    mapreduce.task.io.sort.mb: 256
+    mapreduce.job.counters.limit: 4200
+    mapreduce.framework.name: yarn
+    mapreduce.job.split.metainfo.maxsize: 1000000000
+    mapreduce.jobhistory.address: mainRM.master.adh:10020
+    mapreduce.jobhistory.webapp.address: mainRM.master.adh:8188
+    mapreduce.jobhistory.done-dir: /user/history/done
+    mapreduce.jobhistory.intermediate-done-dir: /user/history/intermediate_done
+    mapreduce.jobhistory.client.thread-count: 20
+    mapreduce.job.reduce.slowstart.completedmaps: 0.98
+    mapreduce.job.speculative.slowtaskthreshold: 0.95
+    mapreduce.map.output.compress: "true"
+    mapreduce.map.output.compression.codec: org.apache.hadoop.io.compress.SnappyCodec
+    mapreduce.tasktracker.http.threads: 60
+    mapreduce.map.speculative: "true"
+    mapreduce.reduce.speculative: "true"
+    mapreduce.reduce.shuffle.parallelcopies: 20
+    mapreduce.am.max-attempts: 3
+    mapreduce.map.memory.mb: 1280
+    mapreduce.reduce.memory.mb: 1792
+    mapreduce.map.log.level: WARN
+    mapreduce.reduce.log.level: WARN
+    mapreduce.fileoutputcommitter.algorithm.version: 2
+    mapred.child.java.opts: -XX:SurvivorRatio=8 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=0 -XX:+CMSClassUnloadingEnabled -XX:-CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=80 -XX:SoftRefLRUPolicyMSPerMB=0 -XX:MaxTenuringThreshold=10  -Dsun.jnu.encoding=UTF-8 -Dfile.encoding=UTF-8
+    mapred.child.env: LD_LIBRARY_PATH=/usr/local/lib
