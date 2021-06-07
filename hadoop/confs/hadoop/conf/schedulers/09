@@ -1,0 +1,58 @@
+<allocations>
+
+  <defaultMinSharePreemptionTimeout>300</defaultMinSharePreemptionTimeout>
+  <fairSharePreemptionTimeout>300</fairSharePreemptionTimeout>
+  <queuePlacementPolicy>
+    <rule name="secondaryGroupExistingQueue" create="true" />
+    <rule name="default" />
+  </queuePlacementPolicy>
+
+<!-- queue config -->
+
+<queue name="root">
+
+  <queue name="track">
+    	<minResources>6200000 mb, 20000 vcores</minResources>   
+  	<weight>15</weight>
+	<queue name="report">
+  		<weight>56</weight>
+    		<minResources>4960000 mb, 20000 vcores</minResources>   
+    	</queue>
+	<queue name="igrp">
+    		<minResources>442000 mb, 20000 vcores</minResources>   
+  		<weight>5</weight>
+  	</queue>
+	<queue name="databank">
+    		<minResources>797000 mb, 20000 vcores</minResources>   
+  		<weight>9</weight>
+  	</queue>
+  </queue>
+
+  <queue name="site">
+    <minResources>880000 mb, 20000 vcores</minResources>   
+    <maxResources>2000000 mb, 20000 vcores</maxResources>
+    <weight>6</weight>
+  </queue>
+
+  <queue name="fix">
+    <minResources>210000 mb, 20000 vcores</minResources>
+    <maxResources>210000 mb, 20000 vcores</maxResources>
+    <weight>1</weight>
+  </queue>
+  
+  <queue name="social">
+    <minResources>1000000 mb, 20000 vcores</minResources>   
+    <weight>6</weight>
+  </queue>
+
+  <queue name="dmp">
+    <minResources>2800000 mb, 20000 vcores</minResources>   
+    <weight>10</weight>
+  </queue>
+
+  <queue name="default">
+    <weight>1</weight>
+  </queue>
+
+</queue>
+</allocations>

@@ -1,0 +1,45 @@
+<allocations>
+
+  <defaultMinSharePreemptionTimeout>300</defaultMinSharePreemptionTimeout>
+  <fairSharePreemptionTimeout>600</fairSharePreemptionTimeout>
+
+
+<queue name="root">
+  <queue name="root">
+    <minResources>4500000 mb, 4500 vcores</minResources>   
+  </queue>
+
+    <queue name="databank"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="default"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="dengqiang"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="dmp_ids"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="genglong"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="jiangsw"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="lids"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="lifeng"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="liuxj"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="liuzhe"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="pengyb"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="qiaoyk"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="site"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="tanchangwei"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="tengbin"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="track"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="track_target"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="trainee"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="wangmeng"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="zhangcheng"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="zhangqk"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="zhaojl"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="zhouxx"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="zhuwei"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="dmp_mid"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="quantum_social"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="chenpy"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="track_panel"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="dmp"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="beginner"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+    <queue name="track_report"><maxResources>100000 mb, 100 vcors</maxResources></queue>
+
+</queue>
+</allocations>
