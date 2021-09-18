@@ -14,6 +14,7 @@ END
 echo >> /etc/sysctl.d/30-baihai.conf <<END
 net.ipv4.tcp_tw_recycle = 1
 net.ipv4.tcp_tw_reuse = 1
+net.core.somaxconn=32768
 END
 
 
