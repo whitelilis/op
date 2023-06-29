@@ -1,5 +1,5 @@
 function sc() {
-        tmux a || tmux
+        tmux a -t lz || tmux new -s lz
 }
 
 
