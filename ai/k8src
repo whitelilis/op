@@ -52,6 +52,10 @@ function krp(){
         $KKCCTTLL delete pod  $1 -n $NAMESPACE
 }
 
+function krpf(){
+        $KKCCTTLL -n $NAMESPACE delete pod  $@ --grace-period=0 --force
+}
+
 function krs(){
         $KKCCTTLL delete service  $1 -n $NAMESPACE
 }
@@ -68,6 +72,10 @@ function krd(){
 }
 #############################
 
+
+function cpull(){
+	ctr --namespace k8s.io pull $@
+}
 
 function kdp(){
         $KKCCTTLL describe pod  $1 -n $NAMESPACE
