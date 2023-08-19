@@ -1,0 +1,5 @@
+unbind C-b
+set -g prefix C-z
+bind C-z last-window
+bind-key z send-prefix
+
