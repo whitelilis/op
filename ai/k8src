@@ -1,5 +1,5 @@
 function sc() {
-        tmux a -t ${1:-lz} || tmux new -s ${1:-lz}
+	tmux a -t ${1:-lz} || tmux -f ~/tmux.lz new -s ${1:-lz}
 }
 
 
@@ -8,67 +8,67 @@ KKCCTTLL=kubectl
 NAMESPACE="host"
 
 function kep(){
-        pod=$1
-        if [ $# -gt 1 ]
-        then
-                container=$2
-                $KKCCTTLL exec -it $pod -n $NAMESPACE --container $container -- /bin/bash || \
-                        $KKCCTTLL exec -it $pod -n $NAMESPACE --container $container -- /bin/sh
-                                else
-                                        $KKCCTTLL exec -it $pod -n $NAMESPACE -- /bin/bash || \
-                                                $KKCCTTLL exec -it $pod -n $NAMESPACE -- /bin/sh
-        fi
+	pod=$1
+	if [ $# -gt 1 ]
+	then
+			container=$2
+			$KKCCTTLL exec -it $pod -n $NAMESPACE --container $container -- /bin/bash || \
+			$KKCCTTLL exec -it $pod -n $NAMESPACE --container $container -- /bin/sh
+	else
+		$KKCCTTLL exec -it $pod -n $NAMESPACE -- /bin/bash || \
+		$KKCCTTLL exec -it $pod -n $NAMESPACE -- /bin/sh
+	fi
 }
 function ked(){
-        $KKCCTTLL -n $NAMESPACE edit deployment $@
+	$KKCCTTLL -n $NAMESPACE edit deployment $@
 }
 
 #############################
 function kl {
-        $KKCCTTLL -n $NAMESPACE logs $@
+	$KKCCTTLL -n $NAMESPACE logs $@
 }
 
 function kgp(){
-        $KKCCTTLL get pod -n $NAMESPACE -o wide
+	$KKCCTTLL get pod -n $NAMESPACE -o wide
 }
 
 function kgs(){
-        $KKCCTTLL get service -n $NAMESPACE -o wide
+	$KKCCTTLL get service -n $NAMESPACE -o wide
 }
 
 function kgi(){
-        $KKCCTTLL get ingress -n $NAMESPACE -o wide
+	$KKCCTTLL get ingress -n $NAMESPACE -o wide
 }
 
 function kgc(){
-        $KKCCTTLL get configmap -n $NAMESPACE -o wide
+	$KKCCTTLL get configmap -n $NAMESPACE -o wide
 }
 function kgd(){
-        $KKCCTTLL get deployment -n $NAMESPACE -o wide
+	$KKCCTTLL get deployment -n $NAMESPACE -o wide
 }
 #############################
 
 function krp(){
-        $KKCCTTLL delete pod  $1 -n $NAMESPACE
+	$KKCCTTLL delete pod  $1 -n $NAMESPACE
 }
 
 function krpf(){
-        $KKCCTTLL -n $NAMESPACE delete pod  $@ --grace-period=0 --force
+	$KKCCTTLL -n $NAMESPACE delete pod  $@ --grace-period=0 --force
 }
 
 function krs(){
-        $KKCCTTLL delete service  $1 -n $NAMESPACE
+	$KKCCTTLL delete service  $1 -n $NAMESPACE
 }
 
 function kri(){
-        $KKCCTTLL delete ingress  $1 -n $NAMESPACE
+	$KKCCTTLL delete ingress  $1 -n $NAMESPACE
 }
 
 function krc(){
-        $KKCCTTLL delete configmap  $1 -n $NAMESPACE
+	$KKCCTTLL delete configmap  $1 -n $NAMESPACE
 }
 function krd(){
-        $KKCCTTLL delete deployment  $1 -n $NAMESPACE
+	$KKCCTTLL delete deployment  $1 -n $NAMESPACE
 }
 #############################
 
@@ -78,57 +78,57 @@ function cpull(){
 }
 
 function kdp(){
-        $KKCCTTLL describe pod  $1 -n $NAMESPACE
+	$KKCCTTLL describe pod  $1 -n $NAMESPACE
 }
 
 function kds(){
-        $KKCCTTLL describe service  $1 -n $NAMESPACE
+	$KKCCTTLL describe service  $1 -n $NAMESPACE
 }
 
 function kdi(){
-        $KKCCTTLL describe ingress  $1 -n $NAMESPACE
+	$KKCCTTLL describe ingress  $1 -n $NAMESPACE
 }
 
 function kdc(){
-        $KKCCTTLL describe configmap  $1 -n $NAMESPACE
+	$KKCCTTLL describe configmap  $1 -n $NAMESPACE
 }
 
 function kdd(){
-        $KKCCTTLL describe deployment  $1 -n $NAMESPACE
+	$KKCCTTLL describe deployment  $1 -n $NAMESPACE
 }
 #############################
 
 function hhl(){
-        helm --namespace $NAMESPACE list $@
+	helm --namespace $NAMESPACE list $@
 }
 
 function hhi(){
-        helm --namespace $NAMESPACE install $@
+	helm --namespace $NAMESPACE install $@
 }
 function hhu(){
-        helm --namespace $NAMESPACE uninstall $@
+	helm --namespace $NAMESPACE uninstall $@
 }
 
 function hhg(){
-        helm --namespace $NAMESPACE upgrade $@
+	helm --namespace $NAMESPACE upgrade $@
 }
 #############################
 
 function change_ns(){
-        export NAMESPACE=$1
+	export NAMESPACE=$1
 }
 
 
 function kaf() {
-        $KKCCTTLL apply -f $1
+	$KKCCTTLL apply -f $1
 }
 function kdf() {
-        $KKCCTTLL delete -f $1
+	$KKCCTTLL delete -f $1
 }
 function krf() {
-        $KKCCTTLL replace -f $1
+	$KKCCTTLL replace -f $1
 }
 
 function kcp(){
-        $KKCCTTLL -n $NAMESPACE cp $@
+	$KKCCTTLL -n $NAMESPACE cp $@
 }
